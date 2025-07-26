@@ -1,10 +1,11 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { State } from 'xstate';
 
-jest.mock('@xreason/domain/machineDao', () => ({
-    makeMachineDao: jest.fn(() => ({
-        upsert: jest.fn(),
-        delete: jest.fn(),
-        read: jest.fn((machineExecutionId: string) => {
+vi.mock('@xreason/domain/machineDao', () => ({
+    makeMachineDao: vi.fn(() => ({
+        upsert: vi.fn(),
+        delete: vi.fn(),
+        read: vi.fn((machineExecutionId: string) => {
             if (machineExecutionId === 'mock-execution-id') {
                 return Promise.resolve(mockExecution);
             } else if (machineExecutionId === 'mock-execution-id2') {
@@ -18,33 +19,39 @@ jest.mock('@xreason/domain/machineDao', () => ({
 
 let counter = 0;
 
-jest.mock('@xreason/utils', () => ({
-    ...jest.requireActual('@xreason/utils'),
-    uuidv4: jest.fn(() => (++counter).toString()),
-}));
+vi.mock('@xreason/utils', async () => {
+  const actual = await vi.importActual('@xreason/utils');
+  return {
+    ...actual,
+    uuidv4: vi.fn(() => (++counter).toString()),
+};
+});
 
 import { mockEmailResponse } from '@xreason/__fixtures__/Email';
 
-jest.mock('@xreason/functions', () => ({
-    ...jest.requireActual('@xreason/functions'),
-    sendEmail: jest.fn().mockResolvedValue(mockEmailResponse),
-}));
+vi.mock('@xreason/functions', async () => {
+  const actual = await vi.importActual('@xreason/functions');
+  return {
+    ...actual,
+    sendEmail: vi.fn().mockResolvedValue(mockEmailResponse),
+};
+});
 
 import { mockProgrammerResponse1 } from '@xreason/__fixtures__/Gemini';
 
-jest.mock("@xreason/services/geminiService", () => (
+vi.mock("@xreason/services/geminiService", () => (
     {
-        geminiService: jest.fn(() => {
+        geminiService: vi.fn(() => {
             return mockProgrammerResponse1;
         }),
     }
 ));
 
-jest.mock('@xreason/domain/trainingDataDao', () => ({
-    makeTrainingDataDao: jest.fn(() => ({
-        upsert: jest.fn(),
-        delete: jest.fn(),
-        read: jest.fn((id: string) => {
+vi.mock('@xreason/domain/trainingDataDao', () => ({
+    makeTrainingDataDao: vi.fn(() => ({
+        upsert: vi.fn(),
+        delete: vi.fn(),
+        read: vi.fn((id: string) => {
             return {
                 humanReview: 'this anser is good',
                 isGood: true,
@@ -55,7 +62,7 @@ jest.mock('@xreason/domain/trainingDataDao', () => ({
                 xReason: SupportedEngines.COMS
             }
         }),
-        search: jest.fn((xReason: string, type: string) => {
+        search: vi.fn((xReason: string, type: string) => {
             return [
                 {
                     humanReview: 'this anser is good',
@@ -72,7 +79,7 @@ jest.mock('@xreason/domain/trainingDataDao', () => ({
 }));
 
 // Mock fetch globally since it's used in SendSlackMessage
-global.fetch = jest.fn().mockImplementation(() =>
+global.fetch = vi.fn().mockImplementation(() =>
     Promise.resolve({
         ok: true,
         json: () => Promise.resolve({
@@ -91,11 +98,11 @@ import { machineId, machineId2, mockExecution, mockExecution2 } from '@xreason/_
 describe('testing orchestrator', () => {
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('it should rehydrate an existing execution, move forward, and save', async () => {

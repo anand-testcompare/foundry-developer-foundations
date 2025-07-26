@@ -1,15 +1,16 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { mockEmailResponse, missingRecipientContext, validContext } from '@xreason/__fixtures__/Email';
 
-jest.mock('googleapis', () => ({
-  ...jest.requireActual('googleapis'), // Keep other actual exports
+vi.mock('googleapis', () => ({
+  ...vi.importActual('googleapis'), // Keep other actual exports
 
   google: {
     // Mock the 'gmail' function as before
-    gmail: jest.fn((version: string, auth: any) => {
+    gmail: vi.fn((version: string, auth: any) => {
       return {
         users: {
           messages: {
-            send: jest.fn((request: any) => {
+            send: vi.fn((request: any) => {
               console.log(`Gmail mock called with: ${request}`);
               return Promise.resolve(mockEmailResponse);
             })
@@ -19,10 +20,10 @@ jest.mock('googleapis', () => ({
     }),
 
     // Mock the 'calendar' function as before
-    calendar: jest.fn((version: string, auth: any) => {
+    calendar: vi.fn((version: string, auth: any) => {
       return {
         events: {
-          insert: jest.fn((request: any) => {
+          insert: vi.fn((request: any) => {
             console.log(`Calendar mock called with: ${request}`);
             return Promise.resolve({ data: { id: 'mockEventId' } });
           }),
@@ -31,10 +32,10 @@ jest.mock('googleapis', () => ({
     }),
 
     // Mock the 'customsearch' function as before
-    customsearch: jest.fn((version: string) => {
+    customsearch: vi.fn((version: string) => {
       return {
         cse: {
-          list: jest.fn((params: any) => {
+          list: vi.fn((params: any) => {
             console.log(`Custom Search mock called with: ${params}`);
             return Promise.resolve({
               data: {
@@ -51,14 +52,14 @@ jest.mock('googleapis', () => ({
 
     // Add a mock for the 'auth' object and its 'GoogleAuth' constructor
     auth: {
-      GoogleAuth: jest.fn().mockImplementation((config) => {
+      GoogleAuth: vi.fn().mockImplementation((config) => {
         console.log('Mocked GoogleAuth constructor called');
 
         // Return a mock object that mimics the behavior of a GoogleAuth instance
         return {
           // Mock methods that are called on the GoogleAuth instance
-          getClient: jest.fn().mockResolvedValue({
-            getRequestHeaders: jest.fn().mockResolvedValue({ /* mock headers */ }), // Mock getRequestHeaders if used
+          getClient: vi.fn().mockResolvedValue({
+            getRequestHeaders: vi.fn().mockResolvedValue({ /* mock headers */ }), // Mock getRequestHeaders if used
           }),
         };
       }),
@@ -75,11 +76,11 @@ import { Context } from '@xreason/reasoning';
 describe('sendEmail', () => {
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterAll(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   });
 
   it('calls sendEmail and returns the expected response', async () => {

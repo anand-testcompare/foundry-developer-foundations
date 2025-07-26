@@ -1,18 +1,32 @@
+import { describe, test, expect, beforeEach, afterAll, vi } from 'vitest';
 import { simpleMachine, complexMachine } from "@xreason/__fixtures__";
 import { StateConfig } from "@xreason/reasoning";
-import { getUniqueStateIds } from "@xreason/utils";
-let counter = 0;
 
-jest.mock("@xreason/utils", () => ({
-  ...jest.requireActual("@xreason/utils"),
-  uuidv4: jest.fn(() => (++counter).toString()),
-}));
-
-afterAll(() => {
-  jest.clearAllMocks()
+// Mock the utils module with a counter that can be reset
+vi.mock("@xreason/utils", () => {
+  let counter = 0;
+  return {
+    getUniqueStateIds: vi.fn().mockImplementation((original) => original),
+    uuidv4: vi.fn().mockImplementation(() => (++counter).toString()),
+    // Reset counter function for testing
+    __resetCounter: () => { counter = 0; }
+  };
 });
 
-beforeEach(() => counter = 0);
+// Import the mocked module
+import { getUniqueStateIds } from "@xreason/utils";
+
+afterAll(() => {
+  vi.clearAllMocks();
+});
+
+beforeEach(async () => {
+  // Reset the counter before each test
+  const utils = await import("@xreason/utils");
+  if ('__resetCounter' in utils) {
+    (utils as any).__resetCounter();
+  }
+});
 
 describe('Testing the getUniqueStateIds function', () => {
   test("Testing Deuplication of a state machines without parellel states", async () => {

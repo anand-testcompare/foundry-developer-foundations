@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "sourceMap": true,
-    "types": ["jest", "node"],
+    "types": ["vitest", "node"],
     "baseUrl": ".",
     "paths": {
         "@tracing/*": ["src/*"]
@@ -21,9 +21,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*", "test/**/*", "src/**/*.d.ts",  "jest.config.js"],
+  "include": ["src/**/*", "test/**/*", "src/**/*.d.ts",  "vitest.config.ts"],
   "exclude": ["node_modules", "dist", "ops", "config"],
   "ts-node": {
     "files": true
   }
-} 
+}

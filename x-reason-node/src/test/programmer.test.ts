@@ -1,11 +1,15 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { interpret } from "xstate";
 
 let counter = 0;
 
-jest.mock('@xreason/utils', () => ({
-  ...jest.requireActual('@xreason/utils'),
-  uuidv4: jest.fn(() => (++counter).toString()),
-}));
+vi.mock('@xreason/utils', async () => {
+  const actual = await vi.importActual('@xreason/utils');
+  return {
+  ...actual,
+  uuidv4: vi.fn(() => (++counter).toString()),
+};
+});
 
 import { StateConfig, programV1, Context, MachineEvent, Task } from "@xreason/reasoning";
 import { getFunctionCatalog, stateConfigArray, stateConfigResolvePastStates } from "@xreason/__fixtures__/Programmer";
@@ -13,7 +17,7 @@ import { getFunctionCatalog, stateConfigArray, stateConfigResolvePastStates } fr
 describe('Testing Programmer', () => {
 
   afterAll(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   });
 
   test("Test the programV1 function passing state nodes array", async () => {

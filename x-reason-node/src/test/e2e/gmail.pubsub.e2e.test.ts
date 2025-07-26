@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { google } from 'googleapis';
 import { Buffer } from 'buffer';
 import { OfficeService, TYPES } from '@xreason/types';
@@ -9,7 +10,7 @@ import { container } from '@xreason/inversify.config';
 describe('Gmail Watch E2E', () => {
 
     beforeAll(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should register Gmail watch notifications for each user", async () => {

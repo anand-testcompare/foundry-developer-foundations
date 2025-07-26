@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { Bennie } from "@xreason/Bennie";
 import { container } from "@xreason/inversify.config";
 import { Context, MachineEvent, StateConfig } from "@xreason/reasoning";
@@ -12,7 +13,7 @@ if (!process.env.E2E) {
     describe('testing Bennie', () => {
 
         beforeAll(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         it("Should generate two RFP requests, one for Northslope and one for RANGR. RANGR should request missing information", async () => {

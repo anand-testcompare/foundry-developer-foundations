@@ -1,20 +1,24 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { State } from 'xstate';
 
 import { headlessInterpreter, MachineEvent, Context, StateConfig, Task } from '@xreason/reasoning';
 let counter = 0;
 
-jest.mock("@xreason/utils", () => ({
-    ...jest.requireActual("@xreason/utils"),
-    uuidv4: jest.fn(() => (++counter).toString()),
-}));
+vi.mock("@xreason/utils", async () => {
+  const actual = await vi.importActual("@xreason/utils");
+  return {
+    ...actual,
+    uuidv4: vi.fn(() => (++counter).toString()),
+};
+});
 
 describe('headlessInterpreter', () => {
 
     afterAll(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks()
     });
 
-    const mockDispatch = jest.fn();
+    const mockDispatch = vi.fn();
 
     const mockStates: StateConfig[] = [
         {

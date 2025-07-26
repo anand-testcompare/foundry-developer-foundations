@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { Vickie } from "@xreason/Vickie";
 
 if (!process.env.E2E) {
@@ -8,7 +9,7 @@ if (!process.env.E2E) {
     describe('testing Vickie', () => {
 
         beforeAll(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         it("It should retrieve my emails", async () => {

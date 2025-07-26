@@ -1,3 +1,4 @@
+import { describe, test, expect, afterAll, vi } from 'vitest';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -7,10 +8,10 @@ import { gemeniStockMarketConditions } from '@xreason/services/gemeniStockMarket
 describe('gemeniStockMarketConditions', () => {
 
     afterAll(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks();
     });
     // TODO get this test passing after we come up with a solution for Playwright
-    xit('should return search results for a valid query', async () => {
+    test.skip('should return search results for a valid query', async () => {
         const query = 'What are the current market conditions including key indices such as volatility, SPX, SPY, QQQ including todays top movers and losers. Your report should include a table for each index mentioned. Seperate sections for Top Gainers, Top Losers, and Sector performers.';
         try {
             const results = await gemeniStockMarketConditions(query);
